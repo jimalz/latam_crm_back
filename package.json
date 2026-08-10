@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",
-  "scripts": {
-    "dev": "node server.js"
-  },
+ "scripts": {
+  "start": "node server.js",
+  "dev": "node server.js"
+},
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cached": "^6.1.0",
