@@ -2,20 +2,29 @@ import express from 'express';
 import cors from 'cors';
 import pool from './src/db.js';
 
-// ⭐ Add your routes
-import customerRoutes from './src/routes/customerRoutes.js';
-import userRoutes from './src/routes/userRoutes.js';
-
-// Add more as needed
-
-
+// ROUTES
 import healthRoutes from './src/routes/healthRoutes.js';
-app.use('/health', healthRoutes);
+import userRoutes from './src/routes/userRoutes.js';
+import customerRoutes from './src/routes/customerRoutes.js';
 
+// INIT APP
 const app = express();
+
+// MIDDLEWARE
 app.use(cors());
 app.use(express.json());
 
-// ⭐ Use your routes
-app.use('/customers', customerRoutes);
+// ROUTES
+app.use('/health', healthRoutes);
 app.use('/users', userRoutes);
+app.use('/customers', customerRoutes);
+
+// TEST ROUTE
+app.get('/test', (req, res) => {
+  res.send('API running');
+});
+
+// START SERVER
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
