@@ -1,5 +1,11 @@
 import pool from '../db.js';
 
+
+export const healthCheck = (req, res) => {
+  res.json({ status: "ok", message: "latam_crm API is running" });
+};
+
+
 // GET /customers
 export const getCustomers = async (req, res) => {
   try {
