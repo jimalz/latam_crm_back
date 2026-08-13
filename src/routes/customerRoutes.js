@@ -10,7 +10,7 @@ import {
 } from '../controllers/customerController.js';
 
 const router = express.Router();
-import { healthCheck } from '../controllers/healthController.js';
+
 
 router.get('/', getCustomers);
 router.get('/:id', getCustomerById);
