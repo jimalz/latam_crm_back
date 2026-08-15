@@ -1,6 +1,5 @@
 import pool from '../db.js';
 
-console.log("REQ BODY:", req.body);
 
 // GET /users
 export const getUsers = async (req, res) => {
