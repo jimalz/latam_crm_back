@@ -1,5 +1,7 @@
 import pool from '../db.js';
 
+console.log("REQ BODY:", req.body);
+
 // GET /users
 export const getUsers = async (req, res) => {
   try {
@@ -32,7 +34,7 @@ export const getUserById = async (req, res) => {
   }
 };
 
-// POST /users
+// POST / insert into users
 export const createUser = async (req, res) => {
   const { name, email } = req.body;
 
@@ -51,7 +53,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-// PUT /users/:id
+// PUT Update /users/:id
 export const updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, email } = req.body;
