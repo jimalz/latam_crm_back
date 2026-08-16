@@ -33,9 +33,11 @@ export const getUserById = async (req, res) => {
   }
 };
 
-// POST / insert into users
+// POST / CREATE into users
 export const createUser = async (req, res) => {
   const { name, email } = req.body;
+  console.log("REQ BODY:", req.body);
+
 
   try {
     const result = await pool.query(
@@ -52,7 +54,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-// PUT Update /users/:id
+// PUT UPDATE /users/:id
 export const updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, email } = req.body;
