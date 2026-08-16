@@ -1,19 +1,21 @@
-import pool from '../db.js';
+import prisma from "../prisma/prismaClient.js";
 
-
+// HEALTH CHECK
 export const healthCheck = (req, res) => {
   res.json({ status: "ok", message: "latam_crm API is running" });
 };
 
-
 // GET /customers
 export const getCustomers = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM customers ORDER BY id ASC');
-    res.json(result.rows);
+    const customers = await prisma.customers.findMany({
+      orderBy: { id: "asc" },
+    });
+
+    res.json(customers);
   } catch (err) {
-    console.error('Error fetching customers:', err);
-    res.status(500).send('Database error');
+    console.error("Error fetching customers:", err);
+    res.status(500).send("Database error");
   }
 };
 
@@ -22,16 +24,18 @@ export const getCustomerById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query('SELECT * FROM customers WHERE id = $1', [id]);
+    const customer = await prisma.customers.findUnique({
+      where: { id: Number(id) },
+    });
 
-    if (result.rows.length === 0) {
-      return res.status(404).send('Customer not found');
+    if (!customer) {
+      return res.status(404).send("Customer not found");
     }
 
-    res.json(result.rows[0]);
+    res.json(customer);
   } catch (err) {
-    console.error('Error fetching customer:', err);
-    res.status(500).send('Database error');
+    console.error("Error fetching customer:", err);
+    res.status(500).send("Database error");
   }
 };
 
@@ -40,17 +44,14 @@ export const createCustomer = async (req, res) => {
   const { name, email, phone } = req.body;
 
   try {
-    const result = await pool.query(
-      `INSERT INTO customers (name, email, phone)
-       VALUES ($1, $2, $3)
-       RETURNING *`,
-      [name, email, phone]
-    );
+    const customer = await prisma.customers.create({
+      data: { name, email, phone },
+    });
 
-    res.json(result.rows[0]);
+    res.json(customer);
   } catch (err) {
-    console.error('Error creating customer:', err);
-    res.status(500).send('Database error');
+    console.error("Error creating customer:", err);
+    res.status(500).send("Database error");
   }
 };
 
@@ -60,22 +61,19 @@ export const updateCustomer = async (req, res) => {
   const { name, email, phone } = req.body;
 
   try {
-    const result = await pool.query(
-      `UPDATE customers
-       SET name = $1, email = $2, phone = $3
-       WHERE id = $4
-       RETURNING *`,
-      [name, email, phone, id]
-    );
+    const customer = await prisma.customers.update({
+      where: { id: Number(id) },
+      data: { name, email, phone },
+    });
 
-    if (result.rows.length === 0) {
-      return res.status(404).send('Customer not found');
+    res.json(customer);
+  } catch (err) {
+    if (err.code === "P2025") {
+      return res.status(404).send("Customer not found");
     }
 
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Error updating customer:', err);
-    res.status(500).send('Database error');
+    console.error("Error updating customer:", err);
+    res.status(500).send("Database error");
   }
 };
 
@@ -84,18 +82,17 @@ export const deleteCustomer = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query(
-      'DELETE FROM customers WHERE id = $1 RETURNING *',
-      [id]
-    );
+    const customer = await prisma.customers.delete({
+      where: { id: Number(id) },
+    });
 
-    if (result.rows.length === 0) {
-      return res.status(404).send('Customer not found');
+    res.json({ message: "Customer deleted", customer });
+  } catch (err) {
+    if (err.code === "P2025") {
+      return res.status(404).send("Customer not found");
     }
 
-    res.json({ message: 'Customer deleted', customer: result.rows[0] });
-  } catch (err) {
-    console.error('Error deleting customer:', err);
-    res.status(500).send('Database error');
+    console.error("Error deleting customer:", err);
+    res.status(500).send("Database error");
   }
 };
