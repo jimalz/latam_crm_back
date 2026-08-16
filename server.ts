@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import healthRoutes from "./src/routes/healthRoutes.js";
-import authRoutes from "./src/routes/authRoutes.js";
-import customerRoutes from "./src/routes/customerRoutes.js";
-import userRoutes from "./src/routes/userRoutes.js";
+import healthRoutes from "./src/routes/healthRoutes.ts";
+import authRoutes from "./src/routes/authRoutes.ts";
+import customerRoutes from "./src/routes/customerRoutes.ts";
+import userRoutes from "./src/routes/userRoutes.ts";
 
 dotenv.config();
 

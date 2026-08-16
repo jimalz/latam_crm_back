@@ -1,21 +1,39 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import pool from "../db.js";
+import prisma from "../prisma/prismaClient.js";
 
+// REGISTER USER
 export const registerUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Check if email already exists
+    const existingUser = await prisma.users.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already registered" });
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await pool.query(
-      "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email",
-      [email, hashedPassword]
-    );
+    // Create user
+    const user = await prisma.users.create({
+      data: {
+        email,
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+        email: true,
+      },
+    });
 
     res.json({
       message: "User registered",
-      user: result.rows[0]
+      user,
     });
   } catch (error) {
     console.error("Register error:", error);
@@ -23,26 +41,27 @@ export const registerUser = async (req, res) => {
   }
 };
 
+// LOGIN USER
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const result = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
-    );
+    // Find user
+    const user = await prisma.users.findUnique({
+      where: { email },
+    });
 
-    if (result.rows.length === 0) {
+    if (!user) {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    const user = result.rows[0];
-
+    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
+    // Create JWT
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
@@ -51,7 +70,7 @@ export const loginUser = async (req, res) => {
 
     res.json({
       message: "Login successful",
-      token
+      token,
     });
   } catch (error) {
     console.error("Login error:", error);
