@@ -1,4 +1,5 @@
-import prisma from "../prisma/prismaClient.js";
+import { prisma } from "../prisma/prismaClient.ts";
+
 
 // GET /users
 export const getUsers = async (req, res) => {

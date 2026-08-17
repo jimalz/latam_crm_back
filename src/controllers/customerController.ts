@@ -1,4 +1,4 @@
-import prisma from "../prisma/prismaClient.js";
+import { prisma } from "../prisma/prismaClient.ts";
 
 // HEALTH CHECK
 export const healthCheck = (req, res) => {
