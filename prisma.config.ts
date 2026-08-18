@@ -1,17 +1,14 @@
-import { defineConfig } from "@prisma/config";
+import { defineConfig } from "prisma/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+import pkg from "pg";
 
-export default defineConfig({
-  schema: "./prisma/schema.prisma",
-  datasource: {
-    db: {
-      provider: "postgresql",
-      url: process.env.DATABASE_URL
-    }
-  },
-generator client {
-  provider = "prisma-client-js"
-  output   = "./src/generated/prisma"
-}
+const { Pool } = pkg;
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
 });
 
+export default defineConfig({
+  adapter: new PrismaPg(pool),
+  schema: "./prisma/schema.prisma"
+});

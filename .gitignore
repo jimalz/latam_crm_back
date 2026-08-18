@@ -4,4 +4,6 @@ dist
 .vite
 .vite-temp
 
+/src/generated/prisma
+/prisma/dist
 
