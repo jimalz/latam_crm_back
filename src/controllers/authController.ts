@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { prisma } from "../prisma/prismaClient.ts";
-
+import { prisma } from "../prisma/prismaClient.js";
+import { Request, Response } from "express";
 
 // REGISTER USER
-export const registerUser = async (req, res) => {
+export const registerUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -32,18 +32,18 @@ export const registerUser = async (req, res) => {
       },
     });
 
-    res.json({
+    return res.json({
       message: "User registered",
       user,
     });
   } catch (error) {
     console.error("Register error:", error);
-    res.status(500).json({ error: "Registration failed" });
+    return res.status(500).json({ error: "Registration failed" });
   }
 };
 
 // LOGIN USER
-export const loginUser = async (req, res) => {
+export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -52,7 +52,7 @@ export const loginUser = async (req, res) => {
       where: { email },
     });
 
-    if (!user) {
+    if (!user || !user.password) {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
@@ -62,6 +62,11 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET missing");
+      return res.status(500).json({ error: "Server configuration error" });
+    }
+
     // Create JWT
     const token = jwt.sign(
       { id: user.id, email: user.email },
@@ -69,12 +74,12 @@ export const loginUser = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.json({
+    return res.json({
       message: "Login successful",
       token,
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ error: "Login failed" });
+    return res.status(500).json({ error: "Login failed" });
   }
 };

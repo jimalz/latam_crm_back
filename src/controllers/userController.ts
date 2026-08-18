@@ -1,8 +1,8 @@
-import { prisma } from "../prisma/prismaClient.ts";
-
+import { prisma } from "../prisma/prismaClient.js";
+import { Request, Response } from "express";
 
 // GET /users
-export const getUsers = async (req, res) => {
+export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await prisma.users.findMany({
       orderBy: { id: "asc" },
@@ -22,7 +22,7 @@ export const getUsers = async (req, res) => {
 };
 
 // GET /users/:id
-export const getUserById = async (req, res) => {
+export const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -48,7 +48,7 @@ export const getUserById = async (req, res) => {
 };
 
 // POST /users
-export const createUser = async (req, res) => {
+export const createUser = async (req: Request, res: Response) => {
   const { name, email } = req.body;
 
   try {
@@ -70,7 +70,7 @@ export const createUser = async (req, res) => {
 };
 
 // PUT /users/:id
-export const updateUser = async (req, res) => {
+export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, email } = req.body;
 
@@ -87,7 +87,7 @@ export const updateUser = async (req, res) => {
     });
 
     res.json(user);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "P2025") {
       return res.status(404).send("User not found");
     }
@@ -98,7 +98,7 @@ export const updateUser = async (req, res) => {
 };
 
 // DELETE /users/:id
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -112,7 +112,7 @@ export const deleteUser = async (req, res) => {
     });
 
     res.json({ message: "User deleted", user });
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "P2025") {
       return res.status(404).send("User not found");
     }

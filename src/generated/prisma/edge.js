@@ -92,9 +92,41 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UsersScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  created_at: 'created_at'
+};
+
+exports.Prisma.CustomersScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  created_at: 'created_at'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
 
 exports.Prisma.ModelName = {
-
+  users: 'users',
+  customers: 'customers'
 };
 /**
  * Create the Client
@@ -104,14 +136,14 @@ const config = {
   "clientVersion": "7.9.1",
   "engineVersion": "e922089b7d7502aff4249d5da3420f6fa55fc6ad",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n"
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel users {\n  id         Int      @id @default(autoincrement())\n  name       String?\n  email      String   @unique\n  password   String?\n  created_at DateTime @default(now())\n}\n\nmodel customers {\n  id         Int      @id @default(autoincrement())\n  name       String\n  email      String\n  phone      String?\n  created_at DateTime @default(now())\n}\n"
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"users\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"customers\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.parameterizationSchema = {
-  strings: JSON.parse("[]"),
-  graph: "AAAA"
+  strings: JSON.parse("[\"where\",\"users.findUnique\",\"users.findUniqueOrThrow\",\"orderBy\",\"cursor\",\"users.findFirst\",\"users.findFirstOrThrow\",\"users.findMany\",\"data\",\"users.createOne\",\"users.createMany\",\"users.createManyAndReturn\",\"users.updateOne\",\"users.updateMany\",\"users.updateManyAndReturn\",\"create\",\"update\",\"users.upsertOne\",\"users.deleteOne\",\"users.deleteMany\",\"having\",\"_count\",\"_avg\",\"_sum\",\"_min\",\"_max\",\"users.groupBy\",\"users.aggregate\",\"customers.findUnique\",\"customers.findUniqueOrThrow\",\"customers.findFirst\",\"customers.findFirstOrThrow\",\"customers.findMany\",\"customers.createOne\",\"customers.createMany\",\"customers.createManyAndReturn\",\"customers.updateOne\",\"customers.updateMany\",\"customers.updateManyAndReturn\",\"customers.upsertOne\",\"customers.deleteOne\",\"customers.deleteMany\",\"customers.groupBy\",\"customers.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"name\",\"email\",\"phone\",\"created_at\",\"equals\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"not\",\"contains\",\"startsWith\",\"endsWith\",\"password\",\"set\",\"increment\",\"decrement\",\"multiply\",\"divide\"]"),
+  graph: "VxUgCCwAAEgAMC0AAAQAEC4AAEgAMC8CAAAAATABAEUAITEBAAAAATNAAEYAIT8BAEUAIQEAAAABACABAAAAAQAgCCwAAEgAMC0AAAQAEC4AAEgAMC8CAEMAITABAEUAITEBAEQAITNAAEYAIT8BAEUAIQIwAABJACA_AABJACADAAAABAAgAwAABQAwBAAAAQAgAwAAAAQAIAMAAAUAMAQAAAEAIAMAAAAEACADAAAFADAEAAABACAFLwIAAAABMAEAAAABMQEAAAABM0AAAAABPwEAAAABAQgAAAkAIAUvAgAAAAEwAQAAAAExAQAAAAEzQAAAAAE_AQAAAAEBCAAACwAwAQgAAAsAMAUvAgBSACEwAQBQACExAQBPACEzQABRACE_AQBQACECAAAAAQAgCAAADgAgBS8CAFIAITABAFAAITEBAE8AITNAAFEAIT8BAFAAIQIAAAAEACAIAAAQACACAAAABAAgCAAAEAAgAwAAAAEAIA8AAAkAIBAAAA4AIAEAAAABACABAAAABAAgBxUAAFMAIBYAAFQAIBcAAFcAIBgAAFYAIBkAAFUAIDAAAEkAID8AAEkAIAgsAABHADAtAAAXABAuAABHADAvAgA0ACEwAQA2ACExAQA1ACEzQAA3ACE_AQA2ACEDAAAABAAgAwAAFgAwFAAAFwAgAwAAAAQAIAMAAAUAMAQAAAEAIAgsAABCADAtAAAdABAuAABCADAvAgAAAAEwAQBEACExAQBEACEyAQBFACEzQABGACEBAAAAGgAgAQAAABoAIAgsAABCADAtAAAdABAuAABCADAvAgBDACEwAQBEACExAQBEACEyAQBFACEzQABGACEBMgAASQAgAwAAAB0AIAMAAB4AMAQAABoAIAMAAAAdACADAAAeADAEAAAaACADAAAAHQAgAwAAHgAwBAAAGgAgBS8CAAAAATABAAAAATEBAAAAATIBAAAAATNAAAAAAQEIAAAiACAFLwIAAAABMAEAAAABMQEAAAABMgEAAAABM0AAAAABAQgAACQAMAEIAAAkADAFLwIAUgAhMAEATwAhMQEATwAhMgEAUAAhM0AAUQAhAgAAABoAIAgAACcAIAUvAgBSACEwAQBPACExAQBPACEyAQBQACEzQABRACECAAAAHQAgCAAAKQAgAgAAAB0AIAgAACkAIAMAAAAaACAPAAAiACAQAAAnACABAAAAGgAgAQAAAB0AIAYVAABKACAWAABLACAXAABOACAYAABNACAZAABMACAyAABJACAILAAAMwAwLQAAMAAQLgAAMwAwLwIANAAhMAEANQAhMQEANQAhMgEANgAhM0AANwAhAwAAAB0AIAMAAC8AMBQAADAAIAMAAAAdACADAAAeADAEAAAaACAILAAAMwAwLQAAMAAQLgAAMwAwLwIANAAhMAEANQAhMQEANQAhMgEANgAhM0AANwAhDRUAADkAIBYAAEEAIBcAADkAIBgAADkAIBkAADkAIDQCAAAAATUCAAAABDYCAAAABDcCAAAAATgCAAAAATkCAAAAAToCAAAAATsCAEAAIQ4VAAA5ACAYAAA_ACAZAAA_ACA0AQAAAAE1AQAAAAQ2AQAAAAQ3AQAAAAE4AQAAAAE5AQAAAAE6AQAAAAE7AQA-ACE8AQAAAAE9AQAAAAE-AQAAAAEOFQAAPAAgGAAAPQAgGQAAPQAgNAEAAAABNQEAAAAFNgEAAAAFNwEAAAABOAEAAAABOQEAAAABOgEAAAABOwEAOwAhPAEAAAABPQEAAAABPgEAAAABCxUAADkAIBgAADoAIBkAADoAIDRAAAAAATVAAAAABDZAAAAABDdAAAAAAThAAAAAATlAAAAAATpAAAAAATtAADgAIQsVAAA5ACAYAAA6ACAZAAA6ACA0QAAAAAE1QAAAAAQ2QAAAAAQ3QAAAAAE4QAAAAAE5QAAAAAE6QAAAAAE7QAA4ACEINAIAAAABNQIAAAAENgIAAAAENwIAAAABOAIAAAABOQIAAAABOgIAAAABOwIAOQAhCDRAAAAAATVAAAAABDZAAAAABDdAAAAAAThAAAAAATlAAAAAATpAAAAAATtAADoAIQ4VAAA8ACAYAAA9ACAZAAA9ACA0AQAAAAE1AQAAAAU2AQAAAAU3AQAAAAE4AQAAAAE5AQAAAAE6AQAAAAE7AQA7ACE8AQAAAAE9AQAAAAE-AQAAAAEINAIAAAABNQIAAAAFNgIAAAAFNwIAAAABOAIAAAABOQIAAAABOgIAAAABOwIAPAAhCzQBAAAAATUBAAAABTYBAAAABTcBAAAAATgBAAAAATkBAAAAAToBAAAAATsBAD0AITwBAAAAAT0BAAAAAT4BAAAAAQ4VAAA5ACAYAAA_ACAZAAA_ACA0AQAAAAE1AQAAAAQ2AQAAAAQ3AQAAAAE4AQAAAAE5AQAAAAE6AQAAAAE7AQA-ACE8AQAAAAE9AQAAAAE-AQAAAAELNAEAAAABNQEAAAAENgEAAAAENwEAAAABOAEAAAABOQEAAAABOgEAAAABOwEAPwAhPAEAAAABPQEAAAABPgEAAAABDRUAADkAIBYAAEEAIBcAADkAIBgAADkAIBkAADkAIDQCAAAAATUCAAAABDYCAAAABDcCAAAAATgCAAAAATkCAAAAAToCAAAAATsCAEAAIQg0CAAAAAE1CAAAAAQ2CAAAAAQ3CAAAAAE4CAAAAAE5CAAAAAE6CAAAAAE7CABBACEILAAAQgAwLQAAHQAQLgAAQgAwLwIAQwAhMAEARAAhMQEARAAhMgEARQAhM0AARgAhCDQCAAAAATUCAAAABDYCAAAABDcCAAAAATgCAAAAATkCAAAAAToCAAAAATsCADkAIQs0AQAAAAE1AQAAAAQ2AQAAAAQ3AQAAAAE4AQAAAAE5AQAAAAE6AQAAAAE7AQA_ACE8AQAAAAE9AQAAAAE-AQAAAAELNAEAAAABNQEAAAAFNgEAAAAFNwEAAAABOAEAAAABOQEAAAABOgEAAAABOwEAPQAhPAEAAAABPQEAAAABPgEAAAABCDRAAAAAATVAAAAABDZAAAAABDdAAAAAAThAAAAAATlAAAAAATpAAAAAATtAADoAIQgsAABHADAtAAAXABAuAABHADAvAgA0ACEwAQA2ACExAQA1ACEzQAA3ACE_AQA2ACEILAAASAAwLQAABAAQLgAASAAwLwIAQwAhMAEARQAhMQEARAAhM0AARgAhPwEARQAhAAAAAAAAAUABAAAAAQFAAQAAAAEBQEAAAAABBUACAAAAAUECAAAAAUICAAAAAUMCAAAAAUQCAAAAAQAAAAAAAAAAAAUVAAYWAAcXAAgYAAkZAAoAAAAAAAUVAAYWAAcXAAgYAAkZAAoAAAAFFQAQFgARFwASGAATGQAUAAAAAAAFFQAQFgARFwASGAATGQAUAQIBAgMBBQYBBgcBBwgBCQoBCgwCCw0DDA8BDRECDhIEERMBEhQBExUCGhgFGxkLHBsMHRwMHh8MHyAMICEMISMMIiUCIyYNJCgMJSoCJisOJywMKC0MKS4CKjEPKzIV"
 }
 config.compilerWasm = {
   getRuntime: async () => require('./query_compiler_fast_bg.js'),

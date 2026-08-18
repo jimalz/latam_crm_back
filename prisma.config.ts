@@ -8,11 +8,10 @@ export default defineConfig({
       url: process.env.DATABASE_URL
     }
   },
-  generators: {
-    client: {
-      provider: "prisma-client-js",
-      output: "./src/generated/prisma"
-    }
-  }
+generator client {
+  provider = "prisma-client-js"
+  output   = "./src/generated/prisma"
+}
+
 });
 

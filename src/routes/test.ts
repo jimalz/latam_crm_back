@@ -1,17 +1,17 @@
-import { Router } from 'express';
-import { prisma } from "../prisma/prismaClient.ts";
-
+import { Router } from "express";
+import pool from "../db.js";
 
 const router = Router();
 
-router.get('/test-db', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const result = await prisma.$queryRaw`SELECT NOW()`;
-    res.json({ ok: true, result });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ ok: false, error: err });
-  }
+    const result = await pool.query("SELECT NOW()");
+    res.json({ connected: true, time: result.rows[0] });
+} catch (err: any) {
+  res.status(500).json({ connected: false, error: err.message });
+}
+
 });
+
 
 export default router;

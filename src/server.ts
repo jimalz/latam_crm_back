@@ -1,38 +1,30 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import healthRoutes from "./routes/healthRoutes.ts";
-import authRoutes from "./routes/authRoutes.ts";
-import customerRoutes from "./routes/customerRoutes.ts";
-import userRoutes from "./routes/userRoutes.ts";
-import testRoutes from "./routes/test.ts";
 
-
-
+import healthRoutes from "./routes/healthRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import customerRoutes from "./routes/customerRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import testRoutes from "./routes/test.js";
 
 dotenv.config();
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// ROUTES
 app.use("/health", healthRoutes);
 app.use("/auth", authRoutes);
 app.use("/customers", customerRoutes);
 app.use("/users", userRoutes);
 app.use("/test", testRoutes);
 
-
-// Root endpoint
-app.get("/", (req, res) => {
-  res.json({ message: "latam_crm API is running" });
-});
-
-// Server
+// SERVER
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

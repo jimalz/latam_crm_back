@@ -1,12 +1,8 @@
-import { prisma } from "../prisma/prismaClient.ts";
-
-// HEALTH CHECK
-export const healthCheck = (req, res) => {
-  res.json({ status: "ok", message: "latam_crm API is running" });
-};
+import { prisma } from "../prisma/prismaClient.js";
+import { Request, Response } from "express";
 
 // GET /customers
-export const getCustomers = async (req, res) => {
+export const getCustomers = async (req: Request, res: Response) => {
   try {
     const customers = await prisma.customers.findMany({
       orderBy: { id: "asc" },
@@ -20,7 +16,7 @@ export const getCustomers = async (req, res) => {
 };
 
 // GET /customers/:id
-export const getCustomerById = async (req, res) => {
+export const getCustomerById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -40,7 +36,7 @@ export const getCustomerById = async (req, res) => {
 };
 
 // POST /customers
-export const createCustomer = async (req, res) => {
+export const createCustomer = async (req: Request, res: Response) => {
   const { name, email, phone } = req.body;
 
   try {
@@ -56,7 +52,7 @@ export const createCustomer = async (req, res) => {
 };
 
 // PUT /customers/:id
-export const updateCustomer = async (req, res) => {
+export const updateCustomer = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, email, phone } = req.body;
 
@@ -67,7 +63,7 @@ export const updateCustomer = async (req, res) => {
     });
 
     res.json(customer);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "P2025") {
       return res.status(404).send("Customer not found");
     }
@@ -78,7 +74,7 @@ export const updateCustomer = async (req, res) => {
 };
 
 // DELETE /customers/:id
-export const deleteCustomer = async (req, res) => {
+export const deleteCustomer = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -87,7 +83,7 @@ export const deleteCustomer = async (req, res) => {
     });
 
     res.json({ message: "Customer deleted", customer });
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "P2025") {
       return res.status(404).send("Customer not found");
     }
