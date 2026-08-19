@@ -1,4 +1,5 @@
-import { prisma } from "../prisma/prismaClient.js";
+import { prisma } from "../db/prisma";
+
 import { Request, Response } from "express";
 
 // GET /users

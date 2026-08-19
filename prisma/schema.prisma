@@ -1,11 +1,12 @@
-generator client {
-  provider = "prisma-client-js"
-  output   = "./dist/generated/prisma"
-}
-
 datasource db {
   provider = "postgresql"
- }
+}
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 
 model users {
   id         Int      @id @default(autoincrement())

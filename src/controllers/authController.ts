@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { prisma } from "../prisma/prismaClient.js";
+import { prisma } from "../db/prisma";
+
 import { Request, Response } from "express";
 
 // REGISTER USER
@@ -8,7 +9,6 @@ export const registerUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    // Check if email already exists
     const existingUser = await prisma.users.findUnique({
       where: { email },
     });
@@ -17,10 +17,8 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Email already registered" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const user = await prisma.users.create({
       data: {
         email,
@@ -47,7 +45,6 @@ export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
     const user = await prisma.users.findUnique({
       where: { email },
     });
@@ -56,7 +53,6 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid credentials" });
@@ -67,7 +63,6 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(500).json({ error: "Server configuration error" });
     }
 
-    // Create JWT
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
