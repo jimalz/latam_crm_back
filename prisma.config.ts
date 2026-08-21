@@ -1,6 +1,7 @@
 import { defineConfig } from "@prisma/config";
+
 export default defineConfig({
-    datasource: {
-        url: process.env.DATABASE_URL,
-    },
+  datasource: {
+    url: "postgresql://postgres:admin@localhost:5432/mydb"
+  }
 });
