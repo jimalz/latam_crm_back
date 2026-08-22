@@ -1,26 +1,21 @@
-import express from "express";
+// MUST be first
 import dotenv from "dotenv";
-
-import authRoutes from "./routes/authRoutes.js";
-import healthRoutes from "./routes/healthRoutes.js";
-
 dotenv.config();
+
+import express from "express";
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import customerRoutes from "./routes/customerRoutes.js";
 
 const app = express();
 app.use(express.json());
 
-// Auth routes
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/customers", customerRoutes);
 
-// Health route
-app.use("/health", healthRoutes);
-
-// Simple test route
-app.get("/me", (req, res) => {
-  res.json({
-    status: "ok",
-    message: "latam_crm API is running",
-  });
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", message: "latam_crm API is running" });
 });
 
 app.listen(3000, () => {

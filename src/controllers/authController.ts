@@ -1,20 +1,20 @@
 import { prisma } from "../db/prisma.js";
-
-import * as bcrypt from "bcryptjs";
-import * as jwt from "jsonwebtoken";
-
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 
 export const signup = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
-    const existing = await prisma.users.findUnique({
-      where: { email }
-    });
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Name, email, and password are required" });
+    }
+
+    const existing = await prisma.users.findUnique({ where: { email } });
 
     if (existing) {
-      return res.status(400).json({ message: "Email already registered" });
+      return res.status(409).json({ error: "Email already exists" });
     }
 
     const hashed = await bcrypt.hash(password, 10);
@@ -29,10 +29,14 @@ export const signup = async (req: Request, res: Response) => {
       { expiresIn: "7d" }
     );
 
-    res.json({ token, user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Signup failed" });
+    res.json({
+      message: "User created",
+      user: { id: user.id, name: user.name, email: user.email },
+      token
+    });
+
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -40,19 +44,20 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const user = await prisma.users.findUnique({
-      where: { email }
-    });
-
-    if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
-     const valid = await bcrypt.compare(password, user.password!);
+    const user = await prisma.users.findUnique({ where: { email } });
 
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const valid = await bcrypt.compare(password, user.password!);
 
     if (!valid) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
     const token = jwt.sign(
@@ -61,9 +66,13 @@ export const login = async (req: Request, res: Response) => {
       { expiresIn: "7d" }
     );
 
-    res.json({ token, user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Login failed" });
+    res.json({
+      message: "Login successful",
+      user: { id: user.id, name: user.name, email: user.email },
+      token
+    });
+
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
   }
 };

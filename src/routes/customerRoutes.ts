@@ -1,4 +1,5 @@
-import express from "express";
+import { Router } from "express";
+import { verifyToken } from "../middleware/authMiddleware.js";
 import {
   getCustomers,
   getCustomerById,
@@ -7,12 +8,12 @@ import {
   deleteCustomer
 } from "../controllers/customerController.js";
 
-const router = express.Router();
+const router = Router();
 
-router.get("/", getCustomers);
-router.get("/:id", getCustomerById);
-router.post("/", createCustomer);
-router.put("/:id", updateCustomer);
-router.delete("/:id", deleteCustomer);
+router.get("/", verifyToken, getCustomers);
+router.get("/:id", verifyToken, getCustomerById);
+router.post("/", verifyToken, createCustomer);
+router.put("/:id", verifyToken, updateCustomer);
+router.delete("/:id", verifyToken, deleteCustomer);
 
 export default router;

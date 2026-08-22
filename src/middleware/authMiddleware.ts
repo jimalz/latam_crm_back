@@ -1,19 +1,22 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+export interface AuthRequest extends Request {
+  user?: any;
+}
+
+export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) {
-    return res.status(401).json({ error: "No token provided" });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Missing or invalid token" });
   }
 
   const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    // You can attach decoded to req if you want:
-    // (req as any).user = decoded;
+    req.user = decoded;
     next();
   } catch (err) {
     console.error("Token verification failed:", err);

@@ -1,12 +1,11 @@
-import { prisma } from "../db/prisma";
-
+import { prisma } from "../db/prisma.js";
 import { Request, Response } from "express";
 
 // GET /customers
 export const getCustomers = async (req: Request, res: Response) => {
   try {
     const customers = await prisma.customers.findMany({
-      orderBy: { id: "asc" },
+      orderBy: { id: "asc" }
     });
 
     res.json(customers);
@@ -22,12 +21,10 @@ export const getCustomerById = async (req: Request, res: Response) => {
 
   try {
     const customer = await prisma.customers.findUnique({
-      where: { id: Number(id) },
+      where: { id: Number(id) }
     });
 
-    if (!customer) {
-      return res.status(404).send("Customer not found");
-    }
+    if (!customer) return res.status(404).send("Customer not found");
 
     res.json(customer);
   } catch (err) {
@@ -42,7 +39,7 @@ export const createCustomer = async (req: Request, res: Response) => {
 
   try {
     const customer = await prisma.customers.create({
-      data: { name, email, phone },
+      data: { name, email, phone }
     });
 
     res.json(customer);
@@ -60,14 +57,12 @@ export const updateCustomer = async (req: Request, res: Response) => {
   try {
     const customer = await prisma.customers.update({
       where: { id: Number(id) },
-      data: { name, email, phone },
+      data: { name, email, phone }
     });
 
     res.json(customer);
   } catch (err: any) {
-    if (err.code === "P2025") {
-      return res.status(404).send("Customer not found");
-    }
+    if (err.code === "P2025") return res.status(404).send("Customer not found");
 
     console.error("Error updating customer:", err);
     res.status(500).send("Database error");
@@ -80,14 +75,12 @@ export const deleteCustomer = async (req: Request, res: Response) => {
 
   try {
     const customer = await prisma.customers.delete({
-      where: { id: Number(id) },
+      where: { id: Number(id) }
     });
 
     res.json({ message: "Customer deleted", customer });
   } catch (err: any) {
-    if (err.code === "P2025") {
-      return res.status(404).send("Customer not found");
-    }
+    if (err.code === "P2025") return res.status(404).send("Customer not found");
 
     console.error("Error deleting customer:", err);
     res.status(500).send("Database error");

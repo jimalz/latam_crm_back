@@ -1,4 +1,5 @@
-import express from 'express';
+import { Router } from "express";
+import { verifyToken } from "../middleware/authMiddleware.js";
 import {
   getUsers,
   getUserById,
@@ -7,13 +8,12 @@ import {
   deleteUser
 } from "../controllers/userController.js";
 
+const router = Router();
 
-const router = express.Router();
-
-router.get('/', getUsers);
-router.get('/:id', getUserById);
-router.post('/', createUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.get("/", verifyToken, getUsers);
+router.get("/:id", verifyToken, getUserById);
+router.post("/", verifyToken, createUser);
+router.put("/:id", verifyToken, updateUser);
+router.delete("/:id", verifyToken, deleteUser);
 
 export default router;
